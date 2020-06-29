@@ -1,1 +1,5 @@
 .DS_Store
+/04_loop/node_modules/
+*.spec.js
+package.json
+package-lock.json
