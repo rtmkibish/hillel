@@ -1,17 +1,18 @@
 body {
 background-color: #ddf3f5;
+text-align: center;
 }
 
 input {
-  display: block;
-  height: 20vw;
-  width: 40vw;
+  display: inline-block;
+  height: 5vw;
+  width: 10vw;
   margin: 10px auto;
   padding: 0;
 }
 
 input:hover {
   background-color: #cfe5cf;
-  height: 21vw;
-  width: 41vw;
+  height: 6vw;
+  width: 11vw;
 }
