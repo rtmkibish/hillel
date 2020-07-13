@@ -1,110 +1,39 @@
-function odd(array) {
-  const numberArray = getNumberArray(array);
-  const arrayOfOdd = [];
+function map(array, callback) {
+  const resultArray = [];
 
-  for (let i = 0; i < numberArray.length; i++) {
-    if (array[i] % 2) arrayOfOdd.push(array[i]);
+  for(let item of array) {
+    const result = callback(item);
+    resultArray.push(result);
   }
 
-  return arrayOfOdd;
+  return resultArray;
 }
 
-function even(array) {
-  const numberArray = getNumberArray(array);
-  const arrayOfEven = [];
+function filter(array, callback) {
+  const resultArray = [];
 
-  for (let i = 0; i < numberArray.length; i++) {
-    if (array[i] % 2 === 0) arrayOfEven.push(array[i]);
+  for(let prop of array) {
+    const condition = callback(prop);
+
+    if(condition) resultArray.push(prop);
   }
 
-  return arrayOfEven;
+  return resultArray;
 }
 
-function flat(array) {
-  let flattenedArray = [];
-  for (let i = 0; i < array.length; i++) {
-    if (Array.isArray(array[i])) {
-      for ( let j = 0; j < array[i].length; j++) {
-        if ( Number.isSafeInteger(array[i][j]) ) flattenedArray.push(array[i][j]);
-      }
-    } else if ( Number.isSafeInteger(array[i]) ) flattenedArray.push(array[i]);
-  }
+function getMessagesByDate(notifacations) {
+  const messagesByDate = {}
 
-  return flattenedArray;
-}
-
-// Needed only if used in browser
-function getNestedArrayFromUser() {
-  const array = [];
-
-  do {
-    const rawElements = prompt("Input elements divided by comma");
-
-    if (!rawElements) {
-      break;
-    }
-
-    const elementsList = rawElements.split(",");
-    const numberElements = arrayToNumberArray(elementsList);
-
-    if(numberElements.length <= 1) {
-      array.push(numberElements[0]);
+  for(let prop of notifacations) {
+    if(messagesByDate.hasOwnProperty(prop.date)) {
+      messagesByDate[prop.date].push(prop.msg);
     } else {
-      array.push(numberElements);
-    }
-
-  } while (true);
-
-  return array;
-}
-
-function getNumberArray(array) {
-  const safeArray = [];
-
-  for (let i = 0; i < array.length; i++) {
-    if (typeof(array[i]) === "number" && !isNaN(array[i]) && isFinite(array[i])) {
-      safeArray.push(array[i]);
+      messagesByDate[prop.date] = [];
+      messagesByDate[prop.date].push(prop.msg);
     }
   }
 
-  return safeArray;
+  return messagesByDate;
 }
 
-function arrayToNumberArray(array) {
-  const convertedArray = [];
-
-  for (let i = 0; i < array.length; i++) {
-    if (Number(array[i])) convertedArray.push(Number(array[i]));
-  }
-  return convertedArray;
-}
-
-let oddBtn = document.querySelector("#oddBtn");
-let evenBtn = document.querySelector("#evenBtn");
-let flatBtn = document.querySelector("#flatBtn");
-
-oddBtn.addEventListener("click", event => {
-  const userValues = prompt("Provide numbers divided by comma", "").split(",");
-  const numberArray = arrayToNumberArray(userValues);
-  const oddNumbers = odd(numberArray);
-
-  alert(`Your odd only numbers: ${oddNumbers.join(", ")}`);
-});
-
-evenBtn.addEventListener("click", event => {
-  const userValues = prompt("Provide numbers divided by comma", "").split(",");
-  const numberArray = arrayToNumberArray(userValues);
-  const evenNumbers = even(numberArray);
-
-  alert(`Your eeven only numbers: ${evenNumbers.join(", ")}`);
-});
-
-flatBtn.addEventListener("click", event => {
-  const array = getNestedArrayFromUser();
-  const flattenedArray = flat(array);
-
-  alert(`Your flattened array: ${flattenedArray.join(", ")}`);
-});
-
-
-// module.exports = { odd, even, flat }
+module.exports = { map, filter, getMessagesByDate };
