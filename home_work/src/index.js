@@ -1,8 +1,12 @@
-function bind(object, fn, args = []) {
-  return function () {
-    args.push(...arguments);
-    return fn.apply(object, args);
+function getPalindrome(n, counter = 0) {
+  const strN = String(n);
+  const reversedStrN = strN.split("").reverse().join("");
+  if(strN == reversedStrN) {
+    return {"palindrome": +strN, "steps": counter};
+  } else {
+    return getPalindrome(+strN + +reversedStrN, ++counter);
   }
 }
 
-module.exports = { bind };
+console.log(getPalindrome(96));
+module.exports = { getPalindrome };

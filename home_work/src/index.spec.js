@@ -1,30 +1,15 @@
-const { bind } = require("./index");
+const { getPalindrome } = require('./index');
 
-describe("The bind function tests", () => {
-  test("1", () => {
-    const test = {phrase: "hello world"};
-    function fn() {
-      return this.phrase
-    }
-    const returnPhrase = bind(test, fn);
-    expect(returnPhrase()).toBe("hello world");
-  });
+test("1: 66 -> 66, 0", () => {
+  expect(getPalindrome(66)).toEqual({"palindrome": 66, "steps": 0});
+});
 
-  test("2", () => {
-    const test = {phrase: "hello world"};
-    function fn(a, b) {
-      return `${this.phrase}, ${a}, ${b}`
-    }
-    const returnPhrase = bind(test, fn);
-    expect(returnPhrase(1, 2)).toBe("hello world, 1, 2");
-  });
+test("2: 96  -> 4884, 4", () => {
+  expect(getPalindrome(96)).toEqual({"palindrome": 4884, "steps": 4});
+});
 
-  test("3", () => {
-    const test = {phrase: "hello world"};
-    function fn(a, b) {
-      return `${this.phrase}, ${a}, ${b}`;
-    }
-    const returnPhrase = bind(test, fn, [0]);
-    expect(returnPhrase(17, 2)).toBe("hello world, 0, 17");
-  });
+test("3: 196 -> RangeError", () => {
+  expect(() => {
+    getPalindrome(196);
+  }).toThrow(RangeError);
 });
