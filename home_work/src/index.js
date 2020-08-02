@@ -8,5 +8,4 @@ function getPalindrome(n, counter = 0) {
   }
 }
 
-console.log(getPalindrome(96));
 module.exports = { getPalindrome };
