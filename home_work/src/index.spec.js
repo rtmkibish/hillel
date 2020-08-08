@@ -1,15 +1,34 @@
-const { getPalindrome } = require('./index');
+const {
+  ToDoList
+} = require("./index");
 
-test("1: 66 -> 66, 0", () => {
-  expect(getPalindrome(66)).toEqual({"palindrome": 66, "steps": 0});
-});
+describe("ToDoList tests", () => {
+  test("1: Failed to define new prop", () => {
+    const toDo = new ToDoList;
+    expect(() => {
+      Object.defineProperty(toDo, "test", {
+        value: test,
+      })
+    }).toThrow(Error);
+  });
 
-test("2: 96  -> 4884, 4", () => {
-  expect(getPalindrome(96)).toEqual({"palindrome": 4884, "steps": 4});
-});
+  test("2: Failed to extend", () => {
+    const toDo = new ToDoList;
+    toDo.test = "test";
+    expect(toDo.test).toBe(undefined);
+  });
 
-test("3: 196 -> RangeError", () => {
-  expect(() => {
-    getPalindrome(196);
-  }).toThrow(RangeError);
+  test("3: Failed to delete prop", () => {
+    const toDo = new ToDoList;
+    expect(delete toDo._tasks).toBe(false);
+  });
+
+  test("4: Failed to configure prop", () => {
+    const toDo = new ToDoList;
+    expect(() => {
+      Object.defineProperty(toDo, "_tasks", {
+        enumerable: true,
+      });
+    }).toThrow(Error);
+  });
 });
