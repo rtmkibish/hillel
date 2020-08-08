@@ -10,7 +10,7 @@ function ToDoList() {
 // Internal help method
 Object.defineProperties(ToDoList, {
   _isDuplicate: {
-    value: function (tasksList, task) {
+    value: function (task, tasksList) {
       const isDuplicate = tasksList.find(t => {
         return t.title === task.title && t.text === task.text && t.isDone === task.isDone;
       });
@@ -35,7 +35,7 @@ Object.defineProperties(ToDoList.prototype, {
         data.id = Date.now() + (Math.floor(Math.random() * 1000));
         data.createdAt = new Date().toISOString();
         this._tasks = [data, ...this._tasks];
-        return ToDoList._getTask(data);
+        return ToDoList._getTask(data, this._tasks);
       }
     }
   },
