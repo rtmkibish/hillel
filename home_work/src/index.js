@@ -1,84 +1,125 @@
-function ToDoList() {
+class List {
 
-  Object.defineProperty(this, "_tasks", {
-    value: [],
-    writable: true,
-  });
-  Object.preventExtensions(this);
-}
+  static isDuplicate(item, array) {
+    const isDuplicate = array.find(t => {
+      return t.title === item.title && t.text === item.text;
+    });
+    return isDuplicate;
+  }
 
-// Internal help method
-Object.defineProperties(ToDoList, {
-  _isDuplicate: {
-    value: function (task, tasksList) {
-      const isDuplicate = tasksList.find(t => {
-        return t.title === task.title && t.text === task.text && t.isDone === task.isDone;
-      });
-      return isDuplicate;
-    },
-  },
-  _getTask: {
-    value: function ({
-      id
-    }, tasksList) {
-      const newTaskIndex = tasksList.findIndex(t => t.id === id);
-      return tasksList[newTaskIndex];
-    }
-  },
-});
+  static getItem({id}, array) {
+    const itemIndex = array.findIndex(item => item.id === id);
+    return array[itemIndex];
+  }
 
-// Prototype for ToDoList
-Object.defineProperties(ToDoList.prototype, {
-  addTask: {
-    value: function (data, confirmed) {
-      if (confirmed && !ToDoList._isDuplicate(data, this._tasks)) {
-        data.id = Date.now() + (Math.floor(Math.random() * 1000));
-        data.createdAt = new Date().toISOString();
-        this._tasks = [data, ...this._tasks];
-        return ToDoList._getTask(data, this._tasks);
-      }
-    }
-  },
-  deleteTask: {
-    value: function (task, confirmed) {
-      if (confirmed) {
-        const deletedTask = ToDoList._getTask(task, this._tasks);
-        this._tasks = this._tasks.filter(t => t.id !== task.id);
-        return deletedTask;
-      }
-    }
-  },
-  editTask: {
-    value: function (task, data, confirmed) {
-      if (confirmed && !ToDoList._isDuplicate(data, this._tasks)) {
-        this._tasks = this._tasks.map(t => {
-          if (t.id === task.id) {
-            return {
-              ...t,
-              ...data
-            }
-          } else {
-            return t;
-          }
-        });
-      }
-      return ToDoList._getTask(task, this._tasks);
-    }
-  },
-  statistic: {
-    get: function () {
-      const statObj = this._tasks.reduce((prev, t) => ({
-        ...prev,
-        done: t.isDone ? ++prev.done : prev.done,
-      }), {
-        total: this._tasks.length,
-        done: 0
-      });
-      return statObj;
+  constructor(items) {
+    this._items = Array.isArray(items) ? items : [];
+  }
+
+  add(item, confirm) {
+    if (confirm && !List.isDuplicate(item, this._items)) {
+      item.id = Date.now() + (Math.floor(Math.random() * 1000));
+      item.createdAt = new Date().toISOString();
+      this._items = [item, ...this._items];
+      return List.getItem(item, this._items);
     }
   }
-});
 
-module.exports = {
-  ToDoList
-};
+  remove({id}, confirm) {
+    if (confirm) {
+      const removedItem = List.getItem(item, this._items);
+      this._items = this._items.filter(item => item.id !== id);
+      return removedItem;
+    }
+  }
+
+  get items() {
+    return this._items.slice();
+  }
+
+  loadFromLS(key) {
+    if (typeof key != 'string') {
+      throw new TypeError('Key must be a string type');
+    } 
+    const stringifiedItems = localStorage.getItem(key);
+    const items = JSON.parse(stringifiedItems);
+    return this._items = items ? items : [];
+  }
+
+  saveToLS(key) {
+    const stringifiedItems = JSON.stringify(this._items);
+    localStorage.setItem(key, stringifiedItems);
+    return key;
+  }
+}
+
+
+class ToDoList extends List {
+  constructor(...args) {
+    super(...args);
+  }
+
+  edit({id}, newData, confirm) {
+    if (confirm && !List.isDuplicate(newData, this._items)) {
+      this._items = this._items.map(item => {
+        if (item.id === id) {
+          return {
+            ...item,
+            ...newData
+          }
+        } else {
+          return item;
+        }
+      });
+    }
+    return List.getItem({id}, this._items);
+  }
+
+  done({id}, confirm) {
+    if (confirm) {
+      this._items = this._items.map(item => {
+        if (item.id === id) {
+          item.isDone = true;
+        }
+        return item;
+      });
+    }
+    return List.getItem({id}, this._items);
+  }
+
+  get statistic() {
+    const statObj = this._items.reduce((prev, item) => ({
+      ...prev,
+      done: item.isDone ? ++prev.done : prev.done,
+    }), {
+      total: this._items.length,
+      done: 0
+    });
+    return statObj;
+  }
+}
+
+class ContactList extends List {
+  constructor(...args) {
+    super(...args);
+  }
+
+  add(contact, confirm) {
+    const newContact = super.add(contact, confirm);
+    newContact.phone = contact.phone;
+    return newContact;
+  }
+
+  search(query) {
+    let aim;
+
+    ext: for (let i = 0; i < this._items.length; i++) {
+      for (let key of Object.keys(query)) {
+        if (query[key] !== this._items[i][key]) {
+          continue ext;
+        }
+      }
+      return aim = Object.assign({}, this._items[i]);
+    }
+  }
+}
