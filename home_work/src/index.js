@@ -111,7 +111,7 @@ class ContactList extends List {
   }
 
   search(query) {
-    let aim;
+    let item;
 
     ext: for (let i = 0; i < this._items.length; i++) {
       for (let key of Object.keys(query)) {
@@ -119,7 +119,7 @@ class ContactList extends List {
           continue ext;
         }
       }
-      return aim = Object.assign({}, this._items[i]);
+      return item = Object.assign({}, this._items[i]);
     }
   }
 }
