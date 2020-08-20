@@ -1,5 +1,7 @@
 class List {
+  _items;
 
+  // я не догнал как переделать это на рекурсию
   static isDuplicate(item, array) {
     const isDuplicate = array.find(t => {
       return t.title === item.title && t.text === item.text;
@@ -12,7 +14,14 @@ class List {
     return array[itemIndex];
   }
 
-  constructor(items) {
+  constructor(key) {
+    this.key = key;
+    this.init();
+  }
+
+  init() {
+    const rawData = localStorage.getItem(this.key);
+    const items = JSON.parse(rawData);
     this._items = Array.isArray(items) ? items : [];
   }
 
@@ -27,7 +36,7 @@ class List {
 
   remove({id}, confirm) {
     if (confirm) {
-      const removedItem = List.getItem(item, this._items);
+      const removedItem = List.getItem({id}, this._items);
       this._items = this._items.filter(item => item.id !== id);
       return removedItem;
     }
@@ -37,19 +46,10 @@ class List {
     return this._items.slice();
   }
 
-  loadFromLS(key) {
-    if (typeof key != 'string') {
-      throw new TypeError('Key must be a string type');
-    } 
-    const stringifiedItems = localStorage.getItem(key);
-    const items = JSON.parse(stringifiedItems);
-    return this._items = items ? items : [];
-  }
-
-  saveToLS(key) {
+  save() {
     const stringifiedItems = JSON.stringify(this._items);
-    localStorage.setItem(key, stringifiedItems);
-    return key;
+    localStorage.setItem(this.key, stringifiedItems);
+    return true;
   }
 }
 
