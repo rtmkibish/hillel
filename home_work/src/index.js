@@ -1,125 +1,39 @@
-class List {
-  _items;
-
-  // я не догнал как переделать это на рекурсию
-  static isDuplicate(item, array) {
-    const isDuplicate = array.find(t => {
-      return t.title === item.title && t.text === item.text;
-    });
-    return isDuplicate;
-  }
-
-  static getItem({id}, array) {
-    const itemIndex = array.findIndex(item => item.id === id);
-    return array[itemIndex];
-  }
-
-  constructor(key) {
-    this.key = key;
-    this.init();
-  }
-
-  init() {
-    const rawData = localStorage.getItem(this.key);
-    const items = JSON.parse(rawData);
-    this._items = Array.isArray(items) ? items : [];
-  }
-
-  add(item, confirm) {
-    if (confirm && !List.isDuplicate(item, this._items)) {
-      item.id = Date.now() + (Math.floor(Math.random() * 1000));
-      item.createdAt = new Date().toISOString();
-      this._items = [item, ...this._items];
-      return List.getItem(item, this._items);
-    }
-  }
-
-  remove({id}, confirm) {
-    if (confirm) {
-      const removedItem = List.getItem({id}, this._items);
-      this._items = this._items.filter(item => item.id !== id);
-      return removedItem;
-    }
-  }
-
-  get items() {
-    return this._items.slice();
-  }
-
-  save() {
-    const stringifiedItems = JSON.stringify(this._items);
-    localStorage.setItem(this.key, stringifiedItems);
-    return true;
-  }
-}
-
-
-class ToDoList extends List {
-  constructor(...args) {
-    super(...args);
-  }
-
-  edit({id}, newData, confirm) {
-    if (confirm && !List.isDuplicate(newData, this._items)) {
-      this._items = this._items.map(item => {
-        if (item.id === id) {
-          return {
-            ...item,
-            ...newData
-          }
-        } else {
-          return item;
-        }
-      });
-    }
-    return List.getItem({id}, this._items);
-  }
-
-  done({id}, confirm) {
-    if (confirm) {
-      this._items = this._items.map(item => {
-        if (item.id === id) {
-          item.isDone = true;
-        }
-        return item;
-      });
-    }
-    return List.getItem({id}, this._items);
-  }
-
-  get statistic() {
-    const statObj = this._items.reduce((prev, item) => ({
-      ...prev,
-      done: item.isDone ? ++prev.done : prev.done,
-    }), {
-      total: this._items.length,
-      done: 0
-    });
-    return statObj;
-  }
-}
-
-class ContactList extends List {
-  constructor(...args) {
-    super(...args);
-  }
-
-  add(contact, confirm) {
-    const newContact = super.add(contact, confirm);
-    newContact.phone = contact.phone;
-    return newContact;
-  }
-
-  search(query) {
-    let item;
-
-    ext: for (let i = 0; i < this._items.length; i++) {
-      for (let key of Object.keys(query)) {
-        if (query[key] !== this._items[i][key]) {
-          continue ext;
-        }
+function generateList(array) {
+  const $parnetUl = document.createElement('ul');
+  for (let i = 0; i < array.length; i++) {
+    const el = array[i];
+    const $li = document.createElement('li');
+    if (Array.isArray(el)) {
+      const $nestedUl = document.createElement('ul');
+      for (let j = 0; j < el.length; j++) {
+        const innerEl = el[j];
+        const $nestedLi = document.createElement('li');
+        $nestedLi.textContent = innerEl;
+        $nestedUl.append($nestedLi);
       }
-      return item = Object.assign({}, this._items[i]);
+      $li.append($nestedUl);
+      $parnetUl.append($li);
+    } else {
+      $li.textContent = el;
+      $parnetUl.append($li);
     }
   }
+  return $parnetUl;
+}
+
+function createTable(length = 10) {
+  let counter = 1;
+  const $table = document.createElement('table');
+  for (let i = 0; i < length; i++) {
+    const $tableRow = document.createElement('tr');
+    for (let i = 0; i < length; i++) {
+      const $td = document.createElement('td');
+      $td.textContent = counter;
+      counter++;
+      $tableRow.append($td);
+    }
+    $table.append($tableRow);
+  }
+
+  return $table;
 }
