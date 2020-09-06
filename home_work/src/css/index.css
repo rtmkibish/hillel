@@ -1,0 +1,8 @@
+.done-note {
+  background: lightgray;
+  text-decoration: line-through;
+}
+
+li {
+  list-style-type: none;
+}

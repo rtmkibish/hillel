@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="src/style.css">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./src/css/index.css">
+  <title>To do</title>
 </head>
 <body>
-  <script src="src/index.js"></script>
+  <form action="" id="createNoteForm">
+    <input type="text" name="note">
+    <button type="submit" name="add">Add</button>
+    <select name="filterBy">
+      <option value="all" selected>All notes</option>
+      <option value="done">Done only notes</option>
+    </select>
+  </form>
+  <ul id="todo-list"></ul>
+
+  <script src="./src/index.js"></script>
 </body>
 </html>
